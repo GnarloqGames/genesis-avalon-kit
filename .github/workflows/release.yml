@@ -2,9 +2,7 @@ name: Release
 
 on:
   push:
-    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
 
 jobs:
 
@@ -30,3 +28,8 @@ jobs:
     -
       name: Test
       run: go test -v ./...
+    - 
+      name: Get new tag
+      run: | 
+        go install github.com/caarlos0/svu@latest
+        svu
