@@ -1,0 +1,40 @@
+name: Release
+
+on:
+  workflow_dispatch
+
+permissions:
+  contents: write
+
+jobs:
+
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+    -
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        fetch-tags: true
+    -
+      name: Print log
+      run: git log --oneline --no-decorate
+    -
+      name: "Create tag"
+      run: |
+        go install github.com/caarlos0/svu@latest
+        export PATH=$HOME/go/bin:$PATH
+        export TAG=$(svu)
+        echo "Tagging HEAD with ${TAG}"
+        git tag ${TAG}
+        echo "TAG=${TAG}" >> "$GITHUB_ENV"
+    # -
+    #   name: "Push tag"
+    #   run: |
+    #     git config --global user.name 'Alfred Dobradi'
+    #     git config --global user.email 'alfreddobradi@users.noreply.github.com'
+    #     git remote set-url origin https://x-access-token:${{ secrets.RELEASE_PAT }}@github.com/${{ github.repository }}
+    #     git push --tags
+    -
+      name: Generate list using Markdown
+      run: echo "### Successfully tagged HEAD with ${TAG} and pushed changes." >> $GITHUB_STEP_SUMMARY
