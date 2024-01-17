@@ -23,6 +23,7 @@ jobs:
       uses: golangci/golangci-lint-action@v3
       with:
         version: v1.54
+        args: "--out-format github-actions"
     -
       name: Test
       run: go test -v ./...
