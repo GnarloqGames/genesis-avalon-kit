@@ -1,0 +1,25 @@
+name: release
+
+on:
+  workflow_dispatch
+
+jobs:
+
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+    -
+      uses: actions/checkout@v3
+    -
+      name: "Create tag"
+      run: |
+        go install github.com/caarlos0/svu@latest
+        export PATH=$HOME/go/bin:$PATH
+        export TAG=$(svu)
+        echo "Tagging HEAD with ${TAG}"
+        git tag ${TAG}
+        git push --tags
+        echo "TAG=${TAG}" >> "$GITHUB_ENV"
+    -
+      name: Generate list using Markdown
+      run: echo "### Successfully tagged HEAD with ${TAG} and pushed changes." >> $GITHUB_STEP_SUMMARY
