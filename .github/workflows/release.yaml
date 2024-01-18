@@ -1,4 +1,4 @@
-name: release
+name: Release
 
 on:
   workflow_dispatch
@@ -18,8 +18,14 @@ jobs:
         export TAG=$(svu)
         echo "Tagging HEAD with ${TAG}"
         git tag ${TAG}
-        git push --tags
         echo "TAG=${TAG}" >> "$GITHUB_ENV"
+    -
+      name: "Push tag"
+      run: |
+        git config --global user.name 'Alfred Dobradi'
+        git config --global user.email 'alfreddobradi@users.noreply.github.com'
+        git remote set-url origin https://x-access-token:${{ secrets.RELEASE_PAT }}@github.com/${{ github.repository }}
+        git push --tags
     -
       name: Generate list using Markdown
       run: echo "### Successfully tagged HEAD with ${TAG} and pushed changes." >> $GITHUB_STEP_SUMMARY
