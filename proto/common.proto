@@ -1,0 +1,21 @@
+syntax = "proto3";
+package proto;
+option go_package = "github.com/gnarloqgames/genesis-avalon-kit/proto";
+import "google/protobuf/timestamp.proto";
+
+enum Status {
+    UNKNOWN = 0;
+    OK = 1;
+    ERROR = 2;
+}
+
+message RequestHeader {
+    string TraceID = 1;
+    google.protobuf.Timestamp Timestamp = 2;
+}
+
+message ResponseHeader {
+    google.protobuf.Timestamp Timestamp = 1;
+    Status Status = 2;
+    string Error = 3;
+}

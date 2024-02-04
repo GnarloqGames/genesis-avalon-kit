@@ -1,0 +1,9 @@
+syntax = "proto3";
+package proto;
+option go_package = "github.com/gnarloqgames/genesis-avalon-kit/proto";
+
+import "application.proto";
+
+service Game {
+    rpc Build (BuildRequest) returns (BuildResponse);
+}
