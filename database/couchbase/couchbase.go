@@ -2,7 +2,6 @@ package couchbase
 
 import (
 	"fmt"
-	"log"
 	"log/slog"
 	"time"
 
@@ -57,7 +56,7 @@ func (c *Connection) Upsert(item any) error {
 	bucket := conn.Bucket(Bucket())
 
 	if err := bucket.WaitUntilReady(3*time.Second, nil); err != nil {
-		log.Fatalln(err)
+		return err
 	}
 
 	collName := ""
@@ -85,6 +84,40 @@ func (c *Connection) Upsert(item any) error {
 	}
 
 	return nil
+}
+
+func (c *Connection) GetBuildings(owner string) ([]registry.Building, error) {
+	bucket := conn.Bucket(Bucket())
+
+	if err := bucket.WaitUntilReady(3*time.Second, nil); err != nil {
+		return nil, err
+	}
+
+	query := fmt.Sprintf(`SELECT * FROM buildings WHERE owner = "%s"`, owner)
+	queryResult, err := bucket.Scope(Scope()).Query(query, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	results := make([]registry.Building, 0)
+	for queryResult.Next() {
+		var result map[string]interface{}
+		if err := queryResult.Row(&result); err != nil {
+			return nil, err
+		}
+
+		entity := result["buildings"].(map[string]interface{})
+
+		building := registry.Building{
+			ID:     entity["id"].(string),
+			Owner:  entity["owner"].(string),
+			Name:   entity["name"].(string),
+			Status: entity["status"].(string),
+		}
+		results = append(results, building)
+	}
+
+	return results, nil
 }
 
 func backoffCalculator() gocb.BackoffCalculator {
