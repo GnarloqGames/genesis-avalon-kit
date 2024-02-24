@@ -8,6 +8,7 @@ import (
 
 	"github.com/GnarloqGames/genesis-avalon-kit/registry"
 	"github.com/couchbase/gocb/v2"
+	"github.com/couchbase/gocbcore/v10"
 )
 
 var conn *Connection
@@ -29,7 +30,7 @@ func Get() (*Connection, error) {
 				Username: Username(),
 				Password: Password(),
 			},
-			RetryStrategy: gocb.NewBestEffortRetryStrategy(nil),
+			RetryStrategy: gocb.NewBestEffortRetryStrategy(backoffCalculator()),
 		})
 
 		if err != nil {
@@ -84,4 +85,8 @@ func (c *Connection) Upsert(item any) error {
 	}
 
 	return nil
+}
+
+func backoffCalculator() gocb.BackoffCalculator {
+	return gocb.BackoffCalculator(gocbcore.ExponentialBackoff(1*time.Millisecond, 5*time.Second, 2))
 }
