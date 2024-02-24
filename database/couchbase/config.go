@@ -1,7 +1,7 @@
 package couchbase
 
 var (
-	url      string = "couchbase://localhost"
+	url      string = "localhost"
 	bucket   string
 	username string
 	password string
