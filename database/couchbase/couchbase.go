@@ -38,7 +38,9 @@ func Get() (*Connection, error) {
 		}
 
 		b := cluster.Bucket(Bucket())
-		if err := b.WaitUntilReady(3*time.Second, nil); err != nil {
+		if err := b.WaitUntilReady(3*time.Second, &gocb.WaitUntilReadyOptions{
+			RetryStrategy: gocb.NewBestEffortRetryStrategy(backoffCalculator()),
+		}); err != nil {
 			return nil, err
 		}
 
