@@ -29,6 +29,7 @@ func Get() (*Connection, error) {
 				Username: Username(),
 				Password: Password(),
 			},
+			RetryStrategy: gocb.NewBestEffortRetryStrategy(nil),
 		})
 
 		if err != nil {
