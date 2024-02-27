@@ -1,0 +1,19 @@
+syntax = "proto3";
+package proto;
+option go_package = "github.com/gnarloqgames/genesis-avalon-kit/proto";
+import "google/protobuf/struct.proto";
+import "common.proto";
+
+message BuildRequest {
+    RequestHeader Header = 1;
+
+    string Name = 2;
+    string Duration = 3;
+    google.protobuf.Struct Context = 4;
+}
+
+message BuildResponse {
+    ResponseHeader Header = 1;
+
+    string Response = 2;
+}
