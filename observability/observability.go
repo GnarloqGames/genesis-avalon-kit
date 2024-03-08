@@ -9,7 +9,7 @@ import (
 	"go.opentelemetry.io/otel"
 )
 
-func Setup(ctx context.Context) (shutdown func(context.Context) error, err error) {
+func Setup(ctx context.Context, serviceName, serviceVersion string) (shutdown func(context.Context) error, err error) {
 	var shutdownFuncs []func(context.Context) error
 
 	shutdown = func(ctx context.Context) error {
@@ -27,7 +27,7 @@ func Setup(ctx context.Context) (shutdown func(context.Context) error, err error
 	}
 
 	// Set up meter provider.
-	meterProvider, err := metric.New()
+	meterProvider, err := metric.New(serviceName, serviceVersion)
 	if err != nil {
 		handleErr(err)
 		return
@@ -35,7 +35,7 @@ func Setup(ctx context.Context) (shutdown func(context.Context) error, err error
 	shutdownFuncs = append(shutdownFuncs, meterProvider.Shutdown)
 	otel.SetMeterProvider(meterProvider)
 
-	traceProvider, err := trace.New()
+	traceProvider, err := trace.New(serviceName, serviceVersion)
 	if err != nil {
 		handleErr(err)
 		return
