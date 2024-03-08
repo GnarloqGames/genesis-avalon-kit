@@ -7,6 +7,7 @@ import (
 	"github.com/GnarloqGames/genesis-avalon-kit/observability/metric"
 	"github.com/GnarloqGames/genesis-avalon-kit/observability/trace"
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
 )
 
 func Setup(ctx context.Context, serviceName, serviceVersion string) (shutdown func(context.Context) error, err error) {
@@ -42,6 +43,7 @@ func Setup(ctx context.Context, serviceName, serviceVersion string) (shutdown fu
 	}
 	shutdownFuncs = append(shutdownFuncs, traceProvider.Shutdown)
 	otel.SetTracerProvider(traceProvider)
+	otel.SetTextMapPropagator(propagation.TraceContext{})
 
 	return
 }
