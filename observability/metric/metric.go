@@ -1,4 +1,4 @@
-package metrics
+package metric
 
 import (
 	"go.opentelemetry.io/otel/exporters/prometheus"

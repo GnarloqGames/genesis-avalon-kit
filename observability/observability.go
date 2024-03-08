@@ -4,7 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/GnarloqGames/genesis-avalon-kit/observability/metrics"
+	"github.com/GnarloqGames/genesis-avalon-kit/observability/metric"
+	"github.com/GnarloqGames/genesis-avalon-kit/observability/trace"
 	"go.opentelemetry.io/otel"
 )
 
@@ -26,13 +27,21 @@ func Setup(ctx context.Context) (shutdown func(context.Context) error, err error
 	}
 
 	// Set up meter provider.
-	meterProvider, err := metrics.New()
+	meterProvider, err := metric.New()
 	if err != nil {
 		handleErr(err)
 		return
 	}
 	shutdownFuncs = append(shutdownFuncs, meterProvider.Shutdown)
 	otel.SetMeterProvider(meterProvider)
+
+	traceProvider, err := trace.New()
+	if err != nil {
+		handleErr(err)
+		return
+	}
+	shutdownFuncs = append(shutdownFuncs, traceProvider.Shutdown)
+	otel.SetTracerProvider(traceProvider)
 
 	return
 }
