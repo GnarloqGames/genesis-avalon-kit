@@ -3,7 +3,7 @@ package proto;
 option go_package = "github.com/gnarloqgames/genesis-avalon-kit/proto";
 import "google/protobuf/duration.proto";
 
-message Resource {
+message ResourceBlueprint {
     string ID = 1;
     string Name = 2;
     string Slug = 3;
@@ -11,12 +11,12 @@ message Resource {
 }
 
 message ResourceListItem {
-    Resource Resource = 1;
+    ResourceBlueprint Resource = 1;
     uint64 Amount = 2;
 }
 
 message ResourceList {
-    repeated Resource Resources = 1;
+    repeated ResourceBlueprint Resources = 1;
 }
 
 message Production {
@@ -25,7 +25,7 @@ message Production {
     google.protobuf.Duration ProductionTime = 3;
 }
 
-message Building {
+message BuildingBlueprint {
     string ID = 1;
     string Name = 2;
     string Slug = 3;
