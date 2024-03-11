@@ -2,6 +2,7 @@ syntax = "proto3";
 package proto;
 option go_package = "github.com/gnarloqgames/genesis-avalon-kit/proto";
 import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
 
 message ResourceBlueprint {
     string ID = 1;
@@ -33,4 +34,11 @@ message BuildingBlueprint {
     google.protobuf.Duration Buildtime = 5;
     ResourceList Cost = 6;
     repeated Production Transformers = 7;
+}
+
+message Building {
+    string ID = 1;
+    BuildingBlueprint Blueprint = 2;
+    google.protobuf.Timestamp BuiltAt = 3;
+    bool Active = 4;
 }
