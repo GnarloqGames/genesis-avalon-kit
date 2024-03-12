@@ -1,0 +1,44 @@
+syntax = "proto3";
+package proto;
+option go_package = "github.com/gnarloqgames/genesis-avalon-kit/proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+message ResourceBlueprint {
+    string ID = 1;
+    string Name = 2;
+    string Slug = 3;
+    string Version = 4;
+}
+
+message ResourceListItem {
+    ResourceBlueprint Resource = 1;
+    uint64 Amount = 2;
+}
+
+message ResourceList {
+    repeated ResourceBlueprint Resources = 1;
+}
+
+message Production {
+    ResourceList Cost = 1;
+    ResourceList Output = 2;
+    google.protobuf.Duration ProductionTime = 3;
+}
+
+message BuildingBlueprint {
+    string ID = 1;
+    string Name = 2;
+    string Slug = 3;
+    string Version = 4;
+    google.protobuf.Duration BuildTime = 5;
+    ResourceList Cost = 6;
+    repeated Production Transformers = 7;
+}
+
+message Building {
+    string ID = 1;
+    BuildingBlueprint Blueprint = 2;
+    google.protobuf.Timestamp BuiltAt = 3;
+    bool Active = 4;
+}
