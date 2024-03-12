@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/couchbase/gocb/v2 v2.7.2
 	github.com/couchbase/gocbcore/v10 v10.3.2
+	github.com/google/uuid v1.6.0
 	github.com/nats-io/nats.go v1.32.0
 	github.com/stretchr/testify v1.8.4
 	go.opentelemetry.io/otel v1.24.0
@@ -28,7 +29,6 @@ require (
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.0 // indirect
 	github.com/klauspost/compress v1.17.2 // indirect

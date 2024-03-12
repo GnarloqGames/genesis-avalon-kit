@@ -1,8 +1,7 @@
 package registry
 
 type Building struct {
-	ID     string `json:"id"`
-	Owner  string `json:"owner"`
-	Name   string `json:"name"`
-	Status string `json:"status"`
+	ID      string `json:"id"`
+	BuiltAt string `json:"built_at"`
+	Active  bool   `json:"active"`
 }

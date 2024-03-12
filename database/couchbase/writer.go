@@ -43,7 +43,7 @@ func GetQueue() (*Queue, error) {
 					item := queue.queue[0]
 					queue.queue = queue.queue[1:]
 
-					if err := db.Upsert(item); err != nil {
+					if err := db.upsert(item); err != nil {
 						slog.Error("failed to upsert item", "error", err)
 
 						if err != ErrInvalidItemType {
