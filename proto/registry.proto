@@ -31,7 +31,7 @@ message BuildingBlueprint {
     string Name = 2;
     string Slug = 3;
     string Version = 4;
-    google.protobuf.Duration Buildtime = 5;
+    google.protobuf.Duration BuildTime = 5;
     ResourceList Cost = 6;
     repeated Production Transformers = 7;
 }
