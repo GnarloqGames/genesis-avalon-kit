@@ -35,8 +35,11 @@ var (
 		Version:   Version,
 		BuildTime: durationpb.New(30 * time.Second),
 		Cost: &proto.ResourceList{
-			Resources: []*proto.ResourceBlueprint{
-				wood,
+			Resources: []*proto.ResourceListItem{
+				{
+					Resource: wood,
+					Amount:   10,
+				},
 			},
 		},
 	}
