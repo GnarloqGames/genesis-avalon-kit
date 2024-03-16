@@ -28,7 +28,7 @@ func (c *Connection) SaveBuildingBlueprint(ctx context.Context, blueprint *proto
 		return err
 	}
 
-	tx, err := c.Conn.Begin(ctx)
+	tx, err := c.conn.Begin(ctx)
 	if err != nil {
 		return err
 	}

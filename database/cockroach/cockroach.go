@@ -10,7 +10,7 @@ import (
 var conn *Connection
 
 type Connection struct {
-	*pgx.Conn
+	conn *pgx.Conn
 }
 
 func Get() (*Connection, error) {
