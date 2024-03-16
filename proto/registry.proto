@@ -17,7 +17,7 @@ message ResourceListItem {
 }
 
 message ResourceList {
-    repeated ResourceBlueprint Resources = 1;
+    repeated ResourceListItem Resources = 1;
 }
 
 message Production {
