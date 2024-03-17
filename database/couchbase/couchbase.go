@@ -113,7 +113,7 @@ func (c *Connection) GetBuildings(ctx context.Context, owner uuid.UUID) ([]*prot
 		entity := result["buildings"].(map[string]interface{})
 
 		buildingName := entity["name"].(string)
-		blueprint, ok := registry.Blueprints.Buildings[buildingName]
+		blueprint, ok := registry.Blueprints.Buildings.Get(buildingName)
 		if !ok {
 			return nil, fmt.Errorf("invalid building type %s", buildingName)
 		}
@@ -158,7 +158,7 @@ func (c *Connection) GetBuilding(ctx context.Context, id uuid.UUID) (*proto.Buil
 	entity := result["buildings"].(map[string]interface{})
 
 	buildingName := entity["name"].(string)
-	blueprint, ok := registry.Blueprints.Buildings[buildingName]
+	blueprint, ok := registry.Blueprints.Buildings.Get(buildingName)
 	if !ok {
 		return nil, fmt.Errorf("invalid building type %s", buildingName)
 	}

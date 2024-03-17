@@ -12,7 +12,7 @@ message ResourceBlueprint {
 }
 
 message ResourceListItem {
-    ResourceBlueprint Resource = 1;
+    string Name = 1;
     uint64 Amount = 2;
 }
 
@@ -33,7 +33,7 @@ message BuildingBlueprint {
     string Version = 4;
     google.protobuf.Duration BuildTime = 5;
     ResourceList Cost = 6;
-    repeated Production Transformers = 7;
+    repeated Production Production = 7;
 }
 
 message Building {
