@@ -4,17 +4,20 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/GnarloqGames/genesis-avalon-kit/database/cockroach/driver"
+	"github.com/GnarloqGames/genesis-avalon-kit/database/cockroach/repository"
 	"github.com/jackc/pgx/v5"
 )
 
-var conn *Connection
+var backend *Backend
 
-type Connection struct {
-	conn *pgx.Conn
+type Backend struct {
+	*repository.Registry
+	*repository.Inventory
 }
 
-func Get() (*Connection, error) {
-	if conn == nil {
+func Get() (*Backend, error) {
+	if backend == nil {
 		dsn, err := connectionString()
 		if err != nil {
 			return nil, err
@@ -26,10 +29,15 @@ func Get() (*Connection, error) {
 			return nil, err
 		}
 
-		conn = &Connection{c}
+		conn := driver.Connection{Conn: c}
+
+		backend = &Backend{
+			Inventory: repository.NewInventory(&conn),
+			Registry:  repository.NewRegistry(&conn),
+		}
 	}
 
-	return conn, nil
+	return backend, nil
 }
 
 func connectionString() (string, error) {

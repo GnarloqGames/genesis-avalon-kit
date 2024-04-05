@@ -1,4 +1,4 @@
-package cockroach
+package repository
 
 import (
 	"bytes"
@@ -7,12 +7,23 @@ import (
 	"fmt"
 	"log/slog"
 
+	"github.com/GnarloqGames/genesis-avalon-kit/database/cockroach/driver"
 	"github.com/GnarloqGames/genesis-avalon-kit/proto"
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v5"
 )
 
-func (c *Connection) SaveBuildingBlueprint(ctx context.Context, blueprint *proto.BuildingBlueprint) error {
+type Registry struct {
+	conn *driver.Connection
+}
+
+func NewRegistry(c *driver.Connection) *Registry {
+	return &Registry{
+		conn: c,
+	}
+}
+
+func (c *Registry) SaveBuildingBlueprint(ctx context.Context, blueprint *proto.BuildingBlueprint) error {
 	buf := bytes.NewBufferString("")
 	encoder := json.NewEncoder(buf)
 
@@ -49,7 +60,7 @@ func (c *Connection) SaveBuildingBlueprint(ctx context.Context, blueprint *proto
 	return nil
 }
 
-func (c *Connection) SaveResourceBlueprint(ctx context.Context, blueprint *proto.ResourceBlueprint) error {
+func (c *Registry) SaveResourceBlueprint(ctx context.Context, blueprint *proto.ResourceBlueprint) error {
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 	query, params, err := psql.Insert("resource_blueprints").
 		Columns("id", "version", "name", "slug").
@@ -79,7 +90,7 @@ func (c *Connection) SaveResourceBlueprint(ctx context.Context, blueprint *proto
 	return nil
 }
 
-func (c *Connection) GetBuildingBlueprints(ctx context.Context, version string) ([]*proto.BuildingBlueprint, error) {
+func (c *Registry) GetBuildingBlueprints(ctx context.Context, version string) ([]*proto.BuildingBlueprint, error) {
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 	query, params, err := psql.Select("id", "version", "name", "slug", "definition").
 		From("building_blueprints").
@@ -90,7 +101,7 @@ func (c *Connection) GetBuildingBlueprints(ctx context.Context, version string) 
 		return nil, err
 	}
 
-	rows, err := conn.conn.Query(ctx, query, params...)
+	rows, err := c.conn.Query(ctx, query, params...)
 	if err != nil {
 		return nil, fmt.Errorf("query: %w", err)
 	}
@@ -120,7 +131,7 @@ func (c *Connection) GetBuildingBlueprints(ctx context.Context, version string) 
 	return results, nil
 }
 
-func (c *Connection) GetResourceBlueprints(ctx context.Context, version string) ([]*proto.ResourceBlueprint, error) {
+func (c *Registry) GetResourceBlueprints(ctx context.Context, version string) ([]*proto.ResourceBlueprint, error) {
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 	query, params, err := psql.Select("id", "version", "name", "slug").
 		From("resource_blueprints").
@@ -131,7 +142,7 @@ func (c *Connection) GetResourceBlueprints(ctx context.Context, version string) 
 		return nil, err
 	}
 
-	rows, err := conn.conn.Query(ctx, query, params...)
+	rows, err := c.conn.Query(ctx, query, params...)
 	if err != nil {
 		return nil, fmt.Errorf("query: %w", err)
 	}

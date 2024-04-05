@@ -27,10 +27,10 @@ type BuildRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Header   *RequestHeader   `protobuf:"bytes,1,opt,name=Header,proto3" json:"Header,omitempty"`
-	Name     string           `protobuf:"bytes,2,opt,name=Name,proto3" json:"Name,omitempty"`
-	Duration string           `protobuf:"bytes,3,opt,name=Duration,proto3" json:"Duration,omitempty"`
-	Context  *structpb.Struct `protobuf:"bytes,4,opt,name=Context,proto3" json:"Context,omitempty"`
+	Header   *RequestHeader   `protobuf:"bytes,1,opt,name=Header,proto3" json:"Header"`
+	Name     string           `protobuf:"bytes,2,opt,name=Name,proto3" json:"Name"`
+	Duration string           `protobuf:"bytes,3,opt,name=Duration,proto3" json:"Duration"`
+	Context  *structpb.Struct `protobuf:"bytes,4,opt,name=Context,proto3" json:"Context"`
 }
 
 func (x *BuildRequest) Reset() {
@@ -98,8 +98,8 @@ type BuildResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Header   *ResponseHeader `protobuf:"bytes,1,opt,name=Header,proto3" json:"Header,omitempty"`
-	Response string          `protobuf:"bytes,2,opt,name=Response,proto3" json:"Response,omitempty"`
+	Header   *ResponseHeader `protobuf:"bytes,1,opt,name=Header,proto3" json:"Header"`
+	Response string          `protobuf:"bytes,2,opt,name=Response,proto3" json:"Response"`
 }
 
 func (x *BuildResponse) Reset() {

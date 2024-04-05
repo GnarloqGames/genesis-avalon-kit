@@ -1,4 +1,4 @@
-package registry
+package cache
 
 import (
 	"context"
@@ -8,6 +8,7 @@ import (
 	"github.com/GnarloqGames/genesis-avalon-kit/proto"
 	"github.com/agiledragon/gomonkey/v2"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 var (
@@ -16,35 +17,31 @@ var (
 )
 
 func TestLoad(t *testing.T) {
-	patches := gomonkey.ApplyFunc(LoadResourceBlueprints, func(ctx context.Context, version string) ([]*proto.ResourceBlueprint, error) {
+	patches := gomonkey.ApplyFunc(LoadResourceBlueprints, func(ctx context.Context, version string) error {
 		if version == "0.0.1" {
-			return nil, errFailedResource
+			return errFailedResource
 		}
 
-		response := []*proto.ResourceBlueprint{
-			{
-				ID:      "1",
-				Name:    "Test",
-				Slug:    "test",
-				Version: "1.0.0",
-			},
-		}
-		return response, nil
+		store.Resources.Set("test", &proto.ResourceBlueprint{
+			ID:      "1",
+			Name:    "Test",
+			Slug:    "test",
+			Version: "1.0.0",
+		})
+		return nil
 	})
-	patches.ApplyFunc(LoadBuildingBlueprints, func(ctx context.Context, version string) ([]*proto.BuildingBlueprint, error) {
+	patches.ApplyFunc(LoadBuildingBlueprints, func(ctx context.Context, version string) error {
 		if version == "0.0.2" {
-			return nil, errFailedBuilding
+			return errFailedBuilding
 		}
 
-		response := []*proto.BuildingBlueprint{
-			{
-				ID:      "1",
-				Name:    "Test",
-				Slug:    "test",
-				Version: "1.0.0",
-			},
-		}
-		return response, nil
+		store.Buildings.Set("test", &proto.BuildingBlueprint{
+			ID:      "1",
+			Name:    "Test",
+			Slug:    "test",
+			Version: "1.0.0",
+		})
+		return nil
 	})
 
 	defer patches.Reset()
@@ -80,16 +77,16 @@ func TestLoad(t *testing.T) {
 			if tt.expectedError != nil {
 				assert.ErrorIs(t, err, tt.expectedError)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 
 				resource, ok := store.Resources.Get("test")
-				assert.True(t, ok)
+				require.True(t, ok)
 				assert.Equal(t, "Test", resource.Name)
 				assert.Equal(t, "test", resource.Slug)
 				assert.Equal(t, "1.0.0", resource.Version)
 
 				building, ok := store.Buildings.Get("test")
-				assert.True(t, ok)
+				require.True(t, ok)
 				assert.Equal(t, "Test", building.Name)
 				assert.Equal(t, "test", building.Slug)
 				assert.Equal(t, "1.0.0", building.Version)

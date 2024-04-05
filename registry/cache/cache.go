@@ -1,9 +1,10 @@
-package registry
+package cache
 
 import (
 	"context"
 	"sync"
 
+	"github.com/GnarloqGames/genesis-avalon-kit/database"
 	"github.com/GnarloqGames/genesis-avalon-kit/proto"
 )
 
@@ -80,4 +81,53 @@ func GetLoadedBlueprints(ctx context.Context) map[string]any {
 	s["buildings"] = store.Buildings.GetItems()
 
 	return s
+}
+
+func LoadBuildingBlueprints(ctx context.Context, version string) error {
+	conn, err := database.Get()
+	if err != nil {
+		return err
+	}
+
+	buildings, err := conn.GetBuildingBlueprints(ctx, version)
+	if err != nil {
+		return err
+	}
+
+	for _, building := range buildings {
+		store.Buildings.Set(building.Slug, building)
+	}
+
+	return nil
+}
+
+func LoadResourceBlueprints(ctx context.Context, version string) error {
+	conn, err := database.Get()
+	if err != nil {
+		return err
+	}
+
+	resources, err := conn.GetResourceBlueprints(ctx, version)
+	if err != nil {
+		return err
+	}
+
+	for _, resource := range resources {
+		store.Resources.Set(resource.Slug, resource)
+	}
+
+	return nil
+}
+
+func GetBlueprint[T Blueprint](ctx context.Context, slug string) (any, bool) {
+	var result T
+
+	switch any(result).(type) {
+	case *proto.BuildingBlueprint:
+		return store.Buildings.Get(slug)
+	case *proto.ResourceBlueprint:
+		return store.Resources.Get(slug)
+	}
+
+	return nil, false
 }

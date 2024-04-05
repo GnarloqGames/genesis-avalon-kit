@@ -7,7 +7,6 @@ require (
 	github.com/agiledragon/gomonkey/v2 v2.11.0
 	github.com/couchbase/gocb/v2 v2.7.2
 	github.com/couchbase/gocbcore/v10 v10.3.2
-	github.com/davecgh/go-spew v1.1.1
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.5.5
 	github.com/nats-io/nats.go v1.32.0
@@ -28,6 +27,7 @@ require (
 	github.com/couchbase/gocbcoreps v0.1.2 // indirect
 	github.com/couchbase/goprotostellar v1.0.2 // indirect
 	github.com/couchbaselabs/gocbconnstr/v2 v2.0.0-20230515165046-68b522a21131 // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-logr/logr v1.4.1 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect

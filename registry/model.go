@@ -3,6 +3,7 @@ package registry
 import (
 	"fmt"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/google/uuid"
 )
 
@@ -60,5 +61,9 @@ type Request interface {
 
 func ID(r Request) uuid.UUID {
 	id := fmt.Sprintf("%s:%s", r.GetSlug(), r.GetVersion())
-	return uuid.NewSHA1(uuid.NameSpaceDNS, []byte(id))
+	hash := uuid.NewSHA1(uuid.NameSpaceDNS, []byte(id))
+
+	spew.Dump(hash)
+
+	return hash
 }

@@ -38,7 +38,8 @@ message BuildingBlueprint {
 
 message Building {
     string ID = 1;
-    BuildingBlueprint Blueprint = 2;
-    google.protobuf.Timestamp BuiltAt = 3;
-    bool Active = 4;
+    string Owner = 2;
+    string Blueprint = 3;
+    google.protobuf.Timestamp BuiltAt = 4;
+    bool Active = 5;
 }
