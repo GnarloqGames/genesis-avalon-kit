@@ -58,18 +58,20 @@ func (s *ItemStore[T]) Get(key string) (T, bool) {
 }
 
 func Load(ctx context.Context) error {
-	store = &Store{
+	newStore := &Store{
 		Resources: NewItemStore[*proto.ResourceBlueprint](),
 		Buildings: NewItemStore[*proto.BuildingBlueprint](),
 	}
 
-	if err := LoadResourceBlueprints(ctx, version); err != nil {
+	if err := LoadResourceBlueprints(ctx, newStore, version); err != nil {
 		return err
 	}
 
-	if err := LoadBuildingBlueprints(ctx, version); err != nil {
+	if err := LoadBuildingBlueprints(ctx, newStore, version); err != nil {
 		return err
 	}
+
+	store = newStore
 
 	return nil
 }
@@ -83,7 +85,7 @@ func GetLoadedBlueprints(ctx context.Context) map[string]any {
 	return s
 }
 
-func LoadBuildingBlueprints(ctx context.Context, version string) error {
+func LoadBuildingBlueprints(ctx context.Context, store *Store, version string) error {
 	conn, err := database.Get()
 	if err != nil {
 		return err
@@ -101,7 +103,7 @@ func LoadBuildingBlueprints(ctx context.Context, version string) error {
 	return nil
 }
 
-func LoadResourceBlueprints(ctx context.Context, version string) error {
+func LoadResourceBlueprints(ctx context.Context, store *Store, version string) error {
 	conn, err := database.Get()
 	if err != nil {
 		return err
@@ -119,15 +121,10 @@ func LoadResourceBlueprints(ctx context.Context, version string) error {
 	return nil
 }
 
-func GetBlueprint[T Blueprint](ctx context.Context, slug string) (any, bool) {
-	var result T
+func GetBuildingBlueprint(ctx context.Context, slug string) (*proto.BuildingBlueprint, bool) {
+	return store.Buildings.Get(slug)
+}
 
-	switch any(result).(type) {
-	case *proto.BuildingBlueprint:
-		return store.Buildings.Get(slug)
-	case *proto.ResourceBlueprint:
-		return store.Resources.Get(slug)
-	}
-
-	return nil, false
+func GetResourceBlueprint(ctx context.Context, slug string) (*proto.ResourceBlueprint, bool) {
+	return store.Resources.Get(slug)
 }

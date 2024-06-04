@@ -93,3 +93,31 @@ func SaveResourceBlueprint(ctx context.Context, resource ResourceBlueprintReques
 
 	return conn.SaveResourceBlueprint(ctx, resourceProto)
 }
+
+func GetBuildingBlueprint(ctx context.Context, version string, slug string) (*proto.BuildingBlueprint, error) {
+	store, err := database.Get()
+	if err != nil {
+		return nil, err
+	}
+
+	pb, err := store.GetBuildingBlueprint(ctx, version, slug)
+	if err != nil {
+		return nil, err
+	}
+
+	return pb, nil
+}
+
+func GetResourceBlueprint(ctx context.Context, version string, slug string) (*proto.ResourceBlueprint, error) {
+	store, err := database.Get()
+	if err != nil {
+		return nil, err
+	}
+
+	pb, err := store.GetResourceBlueprint(ctx, version, slug)
+	if err != nil {
+		return nil, err
+	}
+
+	return pb, nil
+}

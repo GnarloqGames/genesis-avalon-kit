@@ -18,6 +18,8 @@ type Store interface {
 	SaveResourceBlueprint(ctx context.Context, blueprint *proto.ResourceBlueprint) error
 	GetBuildingBlueprints(ctx context.Context, version string) ([]*proto.BuildingBlueprint, error)
 	GetResourceBlueprints(ctx context.Context, version string) ([]*proto.ResourceBlueprint, error)
+	GetBuildingBlueprint(ctx context.Context, version string, slug string) (*proto.BuildingBlueprint, error)
+	GetResourceBlueprint(ctx context.Context, version string, slug string) (*proto.ResourceBlueprint, error)
 }
 
 var (

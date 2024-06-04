@@ -92,6 +92,7 @@ func (c *Registry) SaveResourceBlueprint(ctx context.Context, blueprint *proto.R
 
 func (c *Registry) GetBuildingBlueprints(ctx context.Context, version string) ([]*proto.BuildingBlueprint, error) {
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+
 	query, params, err := psql.Select("id", "version", "name", "slug", "definition").
 		From("building_blueprints").
 		Where("version = ?", version).
@@ -159,4 +160,44 @@ func (c *Registry) GetResourceBlueprints(ctx context.Context, version string) ([
 	}
 
 	return results, nil
+}
+
+func (c *Registry) GetBuildingBlueprint(ctx context.Context, version string, slug string) (*proto.BuildingBlueprint, error) {
+	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+	query, params, err := psql.Select("id", "version", "name", "slug", "definition").
+		From("building_blueprints").
+		Where("version = ? AND slug = ?", version, slug).
+		ToSql()
+
+	if err != nil {
+		return nil, err
+	}
+
+	row := c.conn.QueryRow(ctx, query, params...)
+	var bp *proto.BuildingBlueprint
+	if err := row.Scan(&bp); err != nil {
+		return nil, fmt.Errorf("scan: %w", err)
+	}
+
+	return bp, nil
+}
+
+func (c *Registry) GetResourceBlueprint(ctx context.Context, version string, slug string) (*proto.ResourceBlueprint, error) {
+	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+	query, params, err := psql.Select("id", "version", "name", "slug").
+		From("resource_blueprints").
+		Where("version = ? AND slug = ?", version, slug).
+		ToSql()
+
+	if err != nil {
+		return nil, err
+	}
+
+	row := c.conn.QueryRow(ctx, query, params...)
+	var bp *proto.ResourceBlueprint
+	if err := row.Scan(&bp); err != nil {
+		return nil, fmt.Errorf("scan: %w", err)
+	}
+
+	return bp, nil
 }
