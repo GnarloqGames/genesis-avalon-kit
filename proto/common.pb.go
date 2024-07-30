@@ -76,8 +76,8 @@ type RequestHeader struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	TraceID   string                 `protobuf:"bytes,1,opt,name=TraceID,proto3" json:"TraceID,omitempty"`
-	Timestamp *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=Timestamp,proto3" json:"Timestamp,omitempty"`
+	TraceID   string                 `protobuf:"bytes,1,opt,name=TraceID,proto3" json:"TraceID"`
+	Timestamp *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=Timestamp,proto3" json:"Timestamp"`
 }
 
 func (x *RequestHeader) Reset() {
@@ -131,9 +131,9 @@ type ResponseHeader struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Timestamp *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=Timestamp,proto3" json:"Timestamp,omitempty"`
-	Status    Status                 `protobuf:"varint,2,opt,name=Status,proto3,enum=proto.Status" json:"Status,omitempty"`
-	Error     string                 `protobuf:"bytes,3,opt,name=Error,proto3" json:"Error,omitempty"`
+	Timestamp *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=Timestamp,proto3" json:"Timestamp"`
+	Status    Status                 `protobuf:"varint,2,opt,name=Status,proto3,enum=proto.Status" json:"Status"`
+	Error     string                 `protobuf:"bytes,3,opt,name=Error,proto3" json:"Error"`
 }
 
 func (x *ResponseHeader) Reset() {

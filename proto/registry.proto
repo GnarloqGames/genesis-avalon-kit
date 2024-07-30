@@ -12,12 +12,12 @@ message ResourceBlueprint {
 }
 
 message ResourceListItem {
-    ResourceBlueprint Resource = 1;
+    string Name = 1;
     uint64 Amount = 2;
 }
 
 message ResourceList {
-    repeated ResourceBlueprint Resources = 1;
+    repeated ResourceListItem Resources = 1;
 }
 
 message Production {
@@ -33,12 +33,13 @@ message BuildingBlueprint {
     string Version = 4;
     google.protobuf.Duration BuildTime = 5;
     ResourceList Cost = 6;
-    repeated Production Transformers = 7;
+    repeated Production Production = 7;
 }
 
 message Building {
     string ID = 1;
-    BuildingBlueprint Blueprint = 2;
-    google.protobuf.Timestamp BuiltAt = 3;
-    bool Active = 4;
+    string Owner = 2;
+    string Blueprint = 3;
+    google.protobuf.Timestamp BuiltAt = 4;
+    bool Active = 5;
 }
