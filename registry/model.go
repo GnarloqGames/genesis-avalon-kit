@@ -19,15 +19,13 @@ func Hash(name string) uuid.UUID {
 type BuildingBlueprintRequest struct {
 	Name       string       `json:"name"`
 	Slug       string       `json:"slug"`
-	Version    string       `json:"version"`
 	BuildTime  string       `json:"build_time"`
 	Cost       ResourceList `json:"cost"`
 	Production []Production `json:"production"`
 }
 
-func (r BuildingBlueprintRequest) GetName() string    { return r.Name }
-func (r BuildingBlueprintRequest) GetSlug() string    { return r.Slug }
-func (r BuildingBlueprintRequest) GetVersion() string { return r.Version }
+func (r BuildingBlueprintRequest) GetName() string { return r.Name }
+func (r BuildingBlueprintRequest) GetSlug() string { return r.Slug }
 
 type ResourceList []ResourceListItem
 
@@ -43,23 +41,20 @@ type Production struct {
 }
 
 type ResourceBlueprintRequest struct {
-	Name    string `json:"name"`
-	Slug    string `json:"slug"`
-	Version string `json:"version"`
+	Name string `json:"name"`
+	Slug string `json:"slug"`
 }
 
-func (r ResourceBlueprintRequest) GetName() string    { return r.Name }
-func (r ResourceBlueprintRequest) GetSlug() string    { return r.Slug }
-func (r ResourceBlueprintRequest) GetVersion() string { return r.Version }
+func (r ResourceBlueprintRequest) GetName() string { return r.Name }
+func (r ResourceBlueprintRequest) GetSlug() string { return r.Slug }
 
 type Request interface {
 	GetName() string
 	GetSlug() string
-	GetVersion() string
 }
 
-func ID(r Request) uuid.UUID {
-	id := fmt.Sprintf("%s:%s", r.GetSlug(), r.GetVersion())
+func ID(r Request, version string) uuid.UUID {
+	id := fmt.Sprintf("%s:%s", r.GetSlug(), version)
 	hash := uuid.NewSHA1(uuid.NameSpaceDNS, []byte(id))
 
 	return hash

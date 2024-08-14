@@ -16,7 +16,7 @@ const (
 	SlugHouse = "house"
 )
 
-func SaveBuildingBlueprint(ctx context.Context, blueprint BuildingBlueprintRequest, force bool) error {
+func SaveBuildingBlueprint(ctx context.Context, version string, blueprint BuildingBlueprintRequest, force bool) error {
 	conn, err := database.Get()
 	if err != nil {
 		return err
@@ -66,10 +66,10 @@ func SaveBuildingBlueprint(ctx context.Context, blueprint BuildingBlueprintReque
 	}
 
 	blueprintProto := &proto.BuildingBlueprint{
-		ID:         ID(blueprint).String(),
+		ID:         ID(blueprint, version).String(),
 		Name:       blueprint.Name,
 		Slug:       blueprint.Slug,
-		Version:    blueprint.Version,
+		Version:    version,
 		BuildTime:  durationpb.New(duration),
 		Cost:       &proto.ResourceList{Resources: resources},
 		Production: production,
@@ -78,17 +78,17 @@ func SaveBuildingBlueprint(ctx context.Context, blueprint BuildingBlueprintReque
 	return conn.SaveBuildingBlueprint(ctx, blueprintProto)
 }
 
-func SaveResourceBlueprint(ctx context.Context, resource ResourceBlueprintRequest, force bool) error {
+func SaveResourceBlueprint(ctx context.Context, version string, resource ResourceBlueprintRequest, force bool) error {
 	conn, err := database.Get()
 	if err != nil {
 		return err
 	}
 
 	resourceProto := &proto.ResourceBlueprint{
-		ID:      ID(resource).String(),
+		ID:      ID(resource, version).String(),
 		Name:    resource.Name,
 		Slug:    resource.Slug,
-		Version: resource.Version,
+		Version: version,
 	}
 
 	return conn.SaveResourceBlueprint(ctx, resourceProto)
