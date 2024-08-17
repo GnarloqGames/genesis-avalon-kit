@@ -16,6 +16,7 @@ require (
 	go.opentelemetry.io/otel/exporters/prometheus v0.50.0
 	go.opentelemetry.io/otel/sdk v1.28.0
 	go.opentelemetry.io/otel/sdk/metric v1.28.0
+	go.starlark.net v0.0.0-20240725214946-42030a7cedce
 	google.golang.org/grpc v1.65.0
 	google.golang.org/protobuf v1.34.2
 )
