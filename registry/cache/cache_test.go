@@ -17,7 +17,7 @@ var (
 )
 
 func TestLoad(t *testing.T) {
-	patches := gomonkey.ApplyFunc(LoadResourceBlueprints, func(ctx context.Context, store *Store, version string) error {
+	patches := gomonkey.ApplyFunc(LoadBlueprints, func(ctx context.Context, kind Kind, store *Store, version string) error {
 		if version == "0.0.1" {
 			return errFailedResource
 		}
@@ -30,7 +30,7 @@ func TestLoad(t *testing.T) {
 		})
 		return nil
 	})
-	patches.ApplyFunc(LoadBuildingBlueprints, func(ctx context.Context, store *Store, version string) error {
+	patches.ApplyFunc(LoadBlueprints, func(ctx context.Context, kind Kind, store *Store, version string) error {
 		if version == "0.0.2" {
 			return errFailedBuilding
 		}

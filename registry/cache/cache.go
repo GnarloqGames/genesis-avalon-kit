@@ -10,6 +10,13 @@ import (
 
 var store *Store
 
+type Kind string
+
+const (
+	KindBuilding Kind = "building"
+	KindResource Kind = "resource"
+)
+
 type Store struct {
 	Resources *ItemStore[*proto.ResourceBlueprint]
 	Buildings *ItemStore[*proto.BuildingBlueprint]
@@ -63,11 +70,11 @@ func Load(ctx context.Context) error {
 		Buildings: NewItemStore[*proto.BuildingBlueprint](),
 	}
 
-	if err := LoadResourceBlueprints(ctx, newStore, version); err != nil {
+	if err := LoadBlueprints(ctx, KindResource, newStore, version); err != nil {
 		return err
 	}
 
-	if err := LoadBuildingBlueprints(ctx, newStore, version); err != nil {
+	if err := LoadBlueprints(ctx, KindBuilding, newStore, version); err != nil {
 		return err
 	}
 
@@ -85,37 +92,31 @@ func GetLoadedBlueprints(ctx context.Context) map[string]any {
 	return s
 }
 
-func LoadBuildingBlueprints(ctx context.Context, store *Store, version string) error {
+func LoadBlueprints(ctx context.Context, kind Kind, store *Store, version string) error {
 	conn, err := database.Get()
 	if err != nil {
 		return err
 	}
 
-	buildings, err := conn.GetBuildingBlueprints(ctx, version)
-	if err != nil {
-		return err
-	}
+	switch kind {
+	case KindBuilding:
+		buildings, err := conn.GetBuildingBlueprints(ctx, version)
+		if err != nil {
+			return err
+		}
 
-	for _, building := range buildings {
-		store.Buildings.Set(building.Slug, building)
-	}
+		for _, building := range buildings {
+			store.Buildings.Set(building.Slug, building)
+		}
+	case KindResource:
+		resources, err := conn.GetResourceBlueprints(ctx, version)
+		if err != nil {
+			return err
+		}
 
-	return nil
-}
-
-func LoadResourceBlueprints(ctx context.Context, store *Store, version string) error {
-	conn, err := database.Get()
-	if err != nil {
-		return err
-	}
-
-	resources, err := conn.GetResourceBlueprints(ctx, version)
-	if err != nil {
-		return err
-	}
-
-	for _, resource := range resources {
-		store.Resources.Set(resource.Slug, resource)
+		for _, resource := range resources {
+			store.Resources.Set(resource.Slug, resource)
+		}
 	}
 
 	return nil
