@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/GnarloqGames/genesis-avalon-kit/database/cockroach"
+	"github.com/GnarloqGames/genesis-avalon-kit/database/mock"
 	"github.com/GnarloqGames/genesis-avalon-kit/proto"
 	"github.com/google/uuid"
 )
@@ -31,6 +32,8 @@ func Get() (Store, error) {
 	switch kind {
 	case DriverCockroach:
 		return cockroach.Get()
+	case DriverMock:
+		return mock.Get()
 	default:
 		return nil, fmt.Errorf("invalid database driver")
 	}

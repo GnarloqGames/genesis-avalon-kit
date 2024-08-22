@@ -2,6 +2,7 @@ package cache
 
 import (
 	"context"
+	"fmt"
 	"sync"
 
 	"github.com/GnarloqGames/genesis-avalon-kit/database"
@@ -15,6 +16,10 @@ type Kind string
 const (
 	KindBuilding Kind = "building"
 	KindResource Kind = "resource"
+)
+
+var (
+	ErrNotFound = fmt.Errorf("not found")
 )
 
 type Store struct {
@@ -70,10 +75,12 @@ func Load(ctx context.Context) error {
 		Buildings: NewItemStore[*proto.BuildingBlueprint](),
 	}
 
+	// Load resource blueprints
 	if err := LoadBlueprints(ctx, KindResource, newStore, version); err != nil {
 		return err
 	}
 
+	// Load building blueprints
 	if err := LoadBlueprints(ctx, KindBuilding, newStore, version); err != nil {
 		return err
 	}

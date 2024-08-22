@@ -5,46 +5,34 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/GnarloqGames/genesis-avalon-kit/database"
 	"github.com/GnarloqGames/genesis-avalon-kit/proto"
-	"github.com/agiledragon/gomonkey/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 var (
-	errFailedBuilding = fmt.Errorf("failed building")
-	errFailedResource = fmt.Errorf("failed resource")
+	errNotFound = fmt.Errorf("not found")
 )
 
 func TestLoad(t *testing.T) {
-	patches := gomonkey.ApplyFunc(LoadBlueprints, func(ctx context.Context, kind Kind, store *Store, version string) error {
-		if version == "0.0.1" {
-			return errFailedResource
-		}
+	database.SetKind(database.DriverMock)
 
-		store.Resources.Set("test", &proto.ResourceBlueprint{
-			ID:      "1",
-			Name:    "Test",
-			Slug:    "test",
-			Version: "1.0.0",
-		})
-		return nil
-	})
-	patches.ApplyFunc(LoadBlueprints, func(ctx context.Context, kind Kind, store *Store, version string) error {
-		if version == "0.0.2" {
-			return errFailedBuilding
-		}
+	expectedBuildingBlueprint := &proto.BuildingBlueprint{
+		Name:    "Test",
+		Slug:    "test",
+		Version: "1.0.0",
+	}
 
-		store.Buildings.Set("test", &proto.BuildingBlueprint{
-			ID:      "1",
-			Name:    "Test",
-			Slug:    "test",
-			Version: "1.0.0",
-		})
-		return nil
-	})
+	expectedResourceBlueprint := &proto.ResourceBlueprint{
+		Name:    "Test",
+		Slug:    "test",
+		Version: "1.0.0",
+	}
 
-	defer patches.Reset()
+	mock, _ := database.Get() //nolint
+	mock.SaveBuildingBlueprint(context.Background(), expectedBuildingBlueprint)
+	mock.SaveResourceBlueprint(context.Background(), expectedResourceBlueprint)
 
 	tests := []struct {
 		label         string
@@ -59,12 +47,12 @@ func TestLoad(t *testing.T) {
 		{
 			label:         "failed-resource",
 			version:       "0.0.1",
-			expectedError: errFailedResource,
+			expectedError: errNotFound,
 		},
 		{
 			label:         "failed-building",
 			version:       "0.0.2",
-			expectedError: errFailedBuilding,
+			expectedError: errNotFound,
 		},
 	}
 
@@ -75,7 +63,7 @@ func TestLoad(t *testing.T) {
 			err := Load(context.Background())
 
 			if tt.expectedError != nil {
-				assert.ErrorIs(t, err, tt.expectedError)
+				assert.ErrorContains(t, err, "not found")
 			} else {
 				require.NoError(t, err)
 
