@@ -1,66 +1,54 @@
 package transport
 
 import (
-	"fmt"
+	"time"
 
 	"github.com/nats-io/nats.go"
-	"github.com/nats-io/nats.go/encoders/protobuf"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
-type Encoder string
-
-const (
-	EncoderJSON     Encoder = "json"
-	EncoderProtobuf Encoder = "protobuf"
-)
+type Transport interface {
+	Request(subj string, data []byte, timeout time.Duration) (*nats.Msg, error)
+}
 
 type Configuration struct {
 	URL     string
-	Encoder Encoder
 	Options []nats.Option
 }
 
 var DefaultConfig = Configuration{
 	URL:     "127.0.0.1:4222",
-	Encoder: EncoderJSON,
 	Options: make([]nats.Option, 0),
 }
 
 type Connection struct {
-	*nats.EncodedConn
+	*nats.Conn
 }
 
-func NewEncodedConn(config Configuration) (*Connection, error) {
+func NewConn(config Configuration) (*Connection, error) {
 	c, err := nats.Connect(config.URL, config.Options...)
 	if err != nil {
 		return nil, err
 	}
 
-	var encoder string
-	switch config.Encoder {
-	case EncoderJSON:
-		encoder = nats.JSON_ENCODER
-	case EncoderProtobuf:
-		encoder = protobuf.PROTOBUF_ENCODER
-	default:
-		return nil, fmt.Errorf("invalid encoder: %s", config.Encoder)
-	}
+	return &Connection{c}, nil
+}
 
-	nc, err := nats.NewEncodedConn(c, encoder)
+func Request[T protoreflect.ProtoMessage](bus Transport, subject string, request proto.Message, response T, timeout time.Duration) (*nats.Msg, error) {
+	rawRequest, err := proto.Marshal(request)
 	if err != nil {
 		return nil, err
 	}
 
-	return &Connection{nc}, nil
-}
-
-func ParseEncoder(str string) Encoder {
-	encoder := EncoderJSON
-	switch str {
-	case "json":
-	case "protobuf":
-		encoder = EncoderProtobuf
+	rawRes, err := bus.Request(subject, rawRequest, timeout)
+	if err != nil {
+		return nil, err
 	}
 
-	return encoder
+	if err := proto.Unmarshal(rawRes.Data, response); err != nil {
+		return rawRes, err
+	}
+
+	return rawRes, nil
 }
