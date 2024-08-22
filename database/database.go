@@ -13,6 +13,7 @@ import (
 type Store interface {
 	GetBuildings(ctx context.Context, owner uuid.UUID) ([]*proto.Building, error)
 	GetBuilding(ctx context.Context, id uuid.UUID) (*proto.Building, error)
+
 	SaveBuilding(ctx context.Context, building *proto.Building) error
 
 	SaveBuildingBlueprint(ctx context.Context, blueprint *proto.BuildingBlueprint) error
