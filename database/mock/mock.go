@@ -15,6 +15,8 @@ type Store struct {
 
 	ResourceBlueprints []*proto.ResourceBlueprint
 	BuildingBlueprints []*proto.BuildingBlueprint
+
+	TaskStatus map[string]*proto.TaskStatus
 }
 
 func Get() (*Store, error) {
@@ -124,4 +126,9 @@ func (s *Store) GetResourceBlueprint(ctx context.Context, version string, slug s
 	}
 
 	return nil, fmt.Errorf("not found")
+}
+
+func (s *Store) SaveTaskStatus(ctx context.Context, status *proto.TaskStatus) error {
+	s.TaskStatus[status.ID] = status
+	return nil
 }

@@ -22,6 +22,8 @@ type Store interface {
 	GetResourceBlueprints(ctx context.Context, version string) ([]*proto.ResourceBlueprint, error)
 	GetBuildingBlueprint(ctx context.Context, version string, slug string) (*proto.BuildingBlueprint, error)
 	GetResourceBlueprint(ctx context.Context, version string, slug string) (*proto.ResourceBlueprint, error)
+
+	SaveTaskStatus(ctx context.Context, status *proto.TaskStatus) error
 }
 
 var (

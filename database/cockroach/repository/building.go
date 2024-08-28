@@ -110,3 +110,49 @@ func (c *Registry) SaveBuildingBlueprint(ctx context.Context, blueprint *proto.B
 
 	return nil
 }
+
+func (c *Registry) SaveTaskStatus(ctx context.Context, status *proto.TaskStatus) error {
+	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+	query, params, err := psql.Insert("task_status").
+		Columns("id", "version", "name", "owner", "status").
+		Values(status.ID, status.Version, status.Name, status.Owner, status.Status).
+		ToSql()
+
+	if err != nil {
+		return err
+	}
+
+	tx, err := c.conn.Begin(ctx)
+	if err != nil {
+		return err
+	}
+
+	if _, err := tx.Exec(ctx, query, params...); err != nil {
+		if err := tx.Rollback(ctx); err != nil {
+			slog.Error("failed to roll back transaction")
+		}
+		return err
+	}
+
+	return tx.Commit(ctx)
+}
+
+func (c *Registry) GetTaskStatus(ctx context.Context, id string) (*proto.TaskStatus, error) {
+	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+	query, params, err := psql.Select("id", "version", "name", "slug", "definition").
+		From("building_blueprints").
+		Where("id = ?", id).
+		ToSql()
+
+	if err != nil {
+		return nil, err
+	}
+
+	row := c.conn.QueryRow(ctx, query, params...)
+	var status *proto.TaskStatus
+	if err := row.Scan(&status); err != nil {
+		return nil, fmt.Errorf("scan: %w", err)
+	}
+
+	return status, nil
+}

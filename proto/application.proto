@@ -2,6 +2,7 @@ syntax = "proto3";
 package proto;
 option go_package = "github.com/gnarloqgames/genesis-avalon-kit/proto";
 import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
 import "common.proto";
 
 message BuildRequest {
@@ -16,4 +17,13 @@ message BuildResponse {
     ResponseHeader Header = 1;
 
     string Response = 2;
+}
+
+message TaskStatus {
+    string ID = 1;
+    google.protobuf.Timestamp CreatedAt = 2;
+    string Version = 3;
+    string Name = 4;
+    string Owner = 5;
+    string Status = 6;
 }
