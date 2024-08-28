@@ -10,6 +10,7 @@ import (
 
 type Transport interface {
 	Request(subj string, data []byte, timeout time.Duration) (*nats.Msg, error)
+	Publish(subj string, data []byte) error
 }
 
 type Configuration struct {
@@ -51,4 +52,17 @@ func Request[T protoreflect.ProtoMessage](bus Transport, subject string, request
 	}
 
 	return rawRes, nil
+}
+
+func Respond(bus Transport, reply string, message protoreflect.ProtoMessage) error {
+	response, err := proto.Marshal(message)
+	if err != nil {
+		return err
+	}
+
+	if err := bus.Publish(reply, response); err != nil {
+		return err
+	}
+
+	return nil
 }

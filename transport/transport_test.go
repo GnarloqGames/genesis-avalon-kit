@@ -35,6 +35,10 @@ func (tm *TransportMock) Request(subj string, data []byte, timeout time.Duration
 	return nil, fmt.Errorf("invalid request")
 }
 
+func (tm *TransportMock) Publish(subj string, data []byte) error {
+	return nil
+}
+
 func TestRequest(t *testing.T) {
 	conn := &TransportMock{}
 
